@@ -172,9 +172,9 @@ function showLoading(show = true) {
 // A função que se conectará ao Google Sheets
 async function loadDataFromGoogleSheets() {
     return new Promise((resolve, reject) => {
-        const CLIENT_ID = 'SEU_ID_DO_CLIENTE.apps.googleusercontent.com'; // <--- O SEU ID VAI AQUI
-        const SPREADSHEET_ID = 'ID_DA_SUA_PLANILHA'; // <--- O ID DA SUA PLANILHA VAI AQUI
-        const API_KEY = 'SUA_CHAVE_API'; // <--- A CHAVE API VAI AQUI
+        const CLIENT_ID = '716670112874-2bg2gr030ohrg5jv7rqoual8pu136t3e.apps.googleusercontent.com'; // <--- O SEU ID VAI AQUI
+        const SPREADSHEET_ID = '1QLhmly8lkDDlID2p8mog3IKJtP3Hc-aYsFYIipQQRCI'; // <--- O ID DA SUA PLANILHA VAI AQUI
+        const API_KEY = 'AIzaSyC7aVQCyO3sqH7NNb6S3JwEiKyWF_ggOmU'; // <--- A CHAVE API VAI AQUI
 
         const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
         const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
