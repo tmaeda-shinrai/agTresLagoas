@@ -233,22 +233,29 @@ function showLoading(show = true) {
 }
 
 // Event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Mostrar loading inicial
+document.addEventListener('DOMContentLoaded', async function() {
+    // Mostra o indicador de carregamento
     showLoading(true);
     
-    // Simular carregamento de dados
-    setTimeout(() => {
+    try {
+        // Chama a função que busca os dados da planilha
+        const data = await loadDataFromGoogleSheets();
+        
+        // Atualiza as variáveis globais com os dados reais
+        movimentacoesData = data.movimentacoes;
+        cotasData = data.cotas;
+        
+        // Popula os filtros e aplica a lógica de display
         populateMonthFilter();
         applyFilters();
+    } catch (error) {
+        console.error("Falha ao carregar dados da planilha:", error);
+        // Opcional: mostrar uma mensagem de erro na tela
+    } finally {
+        // Esconde o indicador de carregamento
         showLoading(false);
-    }, 1000);
-    
-    // Filtro por mês/ano
-    elements.monthFilter.addEventListener('change', function() {
-        currentMonthFilter = this.value;
-        applyFilters();
-    });
+    }
+});
     
     // Filtro por nome com debounce
     let nameFilterTimeout;
