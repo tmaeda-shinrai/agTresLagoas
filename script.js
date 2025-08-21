@@ -176,19 +176,22 @@ async function loadDataFromGoogleSheets() {
         const SPREADSHEET_ID = '1QLhmly8lkDDlID2p8mog3IKJtP3Hc-aYsFYIipQQRCI'; // <--- O ID DA SUA PLANILHA VAI AQUI
         const API_KEY = 'AIzaSyC7aVQCyO3sqH7NNb6S3JwEiKyWF_ggOmU'; // <--- A CHAVE API VAI AQUI
 
-        const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+         const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
         const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
+        // Inicializa o gapi e a autenticação
         gapi.client.init({
             apiKey: API_KEY,
             clientId: CLIENT_ID,
             discoveryDocs: DISCOVERY_DOCS,
             scope: SCOPES,
         }).then(async () => {
+            // Verifica se o usuário já está logado
             if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
                 await gapi.auth2.getAuthInstance().signIn();
             }
 
+            // Chamar a API para buscar os dados
             const responseMovimentacoes = await gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
                 range: 'movimentacoes!A2:F',
@@ -198,6 +201,7 @@ async function loadDataFromGoogleSheets() {
                 range: 'cotas!A2:B',
             });
 
+            // Processar os dados
             const movimentacoes = responseMovimentacoes.result.values.map(row => ({
                 servidor: row[0],
                 dataInicio: row[1],
@@ -216,7 +220,7 @@ async function loadDataFromGoogleSheets() {
             reject(error);
         });
     });
-}
+}     
 
 // Event Listeners
 elements.monthFilter.addEventListener('change', function() {
