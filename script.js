@@ -235,13 +235,11 @@ function showLoading(show = true) {
     }
 }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', async function() {
-    // Mostra o indicador de carregamento
+// Funções de inicialização do painel
+async function init() {
     showLoading(true);
-    
+
     try {
-        // Chama a função que busca os dados da planilha
         const data = await loadDataFromGoogleSheets();
         
         // Atualiza as variáveis globais com os dados reais
@@ -251,14 +249,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Popula os filtros e aplica a lógica de display
         populateMonthFilter();
         applyFilters();
+
     } catch (error) {
         console.error("Falha ao carregar dados da planilha:", error);
-        // Opcional: mostrar uma mensagem de erro na tela
     } finally {
-        // Esconde o indicador de carregamento
         showLoading(false);
     }
-});
+}
     
     // Filtro por nome com debounce
     let nameFilterTimeout;
