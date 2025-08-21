@@ -1,86 +1,3 @@
-// Dados de exemplo simulando o Google Sheets
-const movimentacoesData = [
-    {
-        servidor: "MARCOS OLIVEIRA DA SILVA",
-        dataInicio: "16/12/2024",
-        dataFinal: "20/12/2024",
-        destino: "Água Clara",
-        valor: 900.00,
-        envioPagamento: "21/01/2025"
-    },
-    {
-        servidor: "SERGIO LUIZ RIBEIRO LEITE",
-        dataInicio: "07/01/2025",
-        dataFinal: "10/01/2025",
-        destino: "Água Clara",
-        valor: 700.00,
-        envioPagamento: "21/01/2025"
-    },
-    {
-        servidor: "SERGIO LUIZ RIBEIRO LEITE",
-        dataInicio: "13/01/2025",
-        dataFinal: "17/01/2025",
-        destino: "Água Clara",
-        valor: 900.00,
-        envioPagamento: "21/01/2025"
-    },
-    {
-        servidor: "ANDRE RODRIGO DE OLIVEIRA SANDOVETE",
-        dataInicio: "13/01/2025",
-        dataFinal: "13/01/2025",
-        destino: "Brasilândia",
-        valor: 100.00,
-        envioPagamento: "21/01/2025"
-    },
-    {
-        servidor: "CLEUNICE MENDONÇA DE MELO",
-        dataInicio: "13/01/2025",
-        dataFinal: "18/01/2025",
-        destino: "Brasilândia",
-        valor: 1100.00,
-        envioPagamento: "21/01/2025"
-    },
-    // Dados adicionais para demonstrar filtros
-    {
-        servidor: "JOÃO SILVA SANTOS",
-        dataInicio: "01/02/2025",
-        dataFinal: "05/02/2025",
-        destino: "Campo Grande",
-        valor: 800.00,
-        envioPagamento: ""
-    },
-    {
-        servidor: "MARIA FERNANDA COSTA",
-        dataInicio: "10/02/2025",
-        dataFinal: "12/02/2025",
-        destino: "Dourados",
-        valor: 600.00,
-        envioPagamento: ""
-    },
-    {
-        servidor: "PEDRO HENRIQUE LIMA",
-        dataInicio: "15/02/2025",
-        dataFinal: "18/02/2025",
-        destino: "Três Lagoas",
-        valor: 950.00,
-        envioPagamento: ""
-    },
-    {
-        servidor: "ANA CAROLINA PEREIRA",
-        dataInicio: "20/03/2025",
-        dataFinal: "22/03/2025",
-        destino: "Corumbá",
-        valor: 750.00,
-        envioPagamento: ""
-    }
-];
-
-const cotasData = [
-    { cota: 12000.00, mes: "2025-01" },
-    { cota: 12000.00, mes: "2025-02" },
-    { cota: 12000.00, mes: "2025-03" }
-];
-
 // Variáveis globais
 let filteredData = [...movimentacoesData];
 let currentMonthFilter = "";
@@ -358,30 +275,65 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Função para integração futura com Google Sheets
+// A função que se conectará ao Google Sheets
 async function loadDataFromGoogleSheets() {
-    // Esta função será implementada quando a integração com Google Sheets for configurada
-    // Por enquanto, retorna os dados de exemplo
+    const CLIENT_ID = '716670112874-2bg2gr030ohrg5jv7rqoual8pu136t3e.apps.googleusercontent.com'; // <--- O SEU ID VAI AQUI
+    const SPREADSHEET_ID = '1QLhmly8lkDDlID2p8mog3IKJtP3Hc-aYsFYIipQQRCI'; // <--- O ID DA SUA PLANILHA VAI AQUI
+    const API_KEY = 'AIzaSyC7aVQCyO3sqH7NNb6S3JwEiKyWF_ggOmU'; // <--- A CHAVE API VAI AQUI
     
-    try {
-        // Aqui seria feita a chamada para a API do Google Sheets
-        // const response = await fetch('URL_DA_API_GOOGLE_SHEETS');
-        // const data = await response.json();
-        
-        // Por enquanto, simular delay de rede
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        return {
-            movimentacoes: movimentacoesData,
-            cotas: cotasData
-        };
-    } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        return {
-            movimentacoes: movimentacoesData,
-            cotas: cotasData
-        };
-    }
+    // Escopo das APIs que vamos usar
+    const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+    const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
+
+    return new Promise((resolve, reject) => {
+        gapi.load('client:auth2', async () => {
+            try {
+                await gapi.client.init({
+                    apiKey: API_KEY,
+                    clientId: CLIENT_ID,
+                    discoveryDocs: DISCOVERY_DOCS,
+                    scope: SCOPES,
+                });
+                
+                // Pedir autorização
+                if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                    await gapi.auth2.getAuthInstance().signIn();
+                }
+
+                // Chamar a API para buscar os dados
+                const responseMovimentacoes = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'movimentacoes!A2:F',
+                });
+                
+                const responseCotas = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'cotas!A2:B',
+                });
+                
+                // Processar os dados
+                const movimentacoes = responseMovimentacoes.result.values.map(row => ({
+                    servidor: row[0],
+                    dataInicio: row[1],
+                    dataFinal: row[2],
+                    destino: row[3],
+                    valor: parseFloat(row[4]),
+                    envioPagamento: row[5]
+                }));
+                
+                const cotas = responseCotas.result.values.map(row => ({
+                    mes: row[0],
+                    cota: parseFloat(row[1])
+                }));
+
+                resolve({ movimentacoes, cotas });
+
+            } catch (error) {
+                console.error("Erro ao carregar dados:", error);
+                reject(error);
+            }
+        });
+    });
 }
 
 // Função para atualizar dados periodicamente
