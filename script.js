@@ -235,24 +235,70 @@ function showLoading(show = true) {
     }
 }
 
-// Funções de inicialização do painel
+// Função de inicialização do painel
 async function init() {
     showLoading(true);
 
     try {
-        const data = await loadDataFromGoogleSheets();
-        
-        // Atualiza as variáveis globais com os dados reais
-        movimentacoesData = data.movimentacoes;
-        cotasData = data.cotas;
-        
+        await new Promise((resolve, reject) => {
+            // AQUI ESTÁ A MÁGICA: A gapi.load só vai chamar a função
+            // depois que ela tiver carregado e pronta para ser usada.
+            gapi.load('client:auth2', async () => {
+                try {
+                    await gapi.client.init({
+                        // ... o resto do seu código de inicialização do cliente ...
+                    });
+
+                    // Pedir autorização
+                    if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                        await gapi.auth2.getAuthInstance().signIn();
+                    }
+
+                    // Chama a função que busca os dados da planilha
+                    const responseMovimentacoes = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: SPREADSHEET_ID,
+                        range: 'movimentacoes!A2:F',
+                    });
+
+                    const responseCotas = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: SPREADSHEET_ID,
+                        range: 'cotas!A2:B',
+                    });
+
+                    // Processar os dados
+                    const movimentacoes = responseMovimentacoes.result.values.map(row => ({
+                        servidor: row[0],
+                        dataInicio: row[1],
+                        dataFinal: row[2],
+                        destino: row[3],
+                        valor: parseFloat(row[4]),
+                        envioPagamento: row[5]
+                    }));
+
+                    const cotas = responseCotas.result.values.map(row => ({
+                        mes: row[0],
+                        cota: parseFloat(row[1])
+                    }));
+
+                    movimentacoesData = movimentacoes;
+                    cotasData = cotas;
+
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
+
         // Popula os filtros e aplica a lógica de display
         populateMonthFilter();
         applyFilters();
 
     } catch (error) {
         console.error("Falha ao carregar dados da planilha:", error);
+        // Opcional: mostrar uma mensagem de erro na tela
     } finally {
+        // Esconde o indicador de carregamento
         showLoading(false);
     }
 }
