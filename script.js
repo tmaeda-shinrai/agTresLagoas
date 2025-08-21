@@ -1,4 +1,7 @@
 // Variáveis globais
+let movimentacoesData = []; 
+let cotasData = [];
+
 let filteredData = [...movimentacoesData];
 let currentMonthFilter = "";
 let currentNameFilter = "";
@@ -280,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             this.style.transform = 'translateY(0) scale(1)';
         });
     });
-});
+
 
 // A função que se conectará ao Google Sheets
 async function loadDataFromGoogleSheets() {
