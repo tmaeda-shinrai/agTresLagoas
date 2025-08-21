@@ -172,7 +172,6 @@ function showLoading(show = true) {
 // A função que se conectará ao Google Sheets
 async function loadDataFromGoogleSheets() {
     return new Promise((resolve, reject) => {
-        // As credenciais devem ser colocadas aqui para serem acessíveis
         const CLIENT_ID = 'SEU_ID_DO_CLIENTE.apps.googleusercontent.com'; // <--- O SEU ID VAI AQUI
         const SPREADSHEET_ID = 'ID_DA_SUA_PLANILHA'; // <--- O ID DA SUA PLANILHA VAI AQUI
         const API_KEY = 'SUA_CHAVE_API'; // <--- A CHAVE API VAI AQUI
@@ -186,12 +185,10 @@ async function loadDataFromGoogleSheets() {
             discoveryDocs: DISCOVERY_DOCS,
             scope: SCOPES,
         }).then(async () => {
-            // Pedir autorização, se necessário
             if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
                 await gapi.auth2.getAuthInstance().signIn();
             }
 
-            // Chamar a API para buscar os dados
             const responseMovimentacoes = await gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
                 range: 'movimentacoes!A2:F',
@@ -201,7 +198,6 @@ async function loadDataFromGoogleSheets() {
                 range: 'cotas!A2:B',
             });
 
-            // Processar os dados
             const movimentacoes = responseMovimentacoes.result.values.map(row => ({
                 servidor: row[0],
                 dataInicio: row[1],
@@ -249,7 +245,9 @@ document.querySelectorAll('.card').forEach(card => {
 // Este é o único ponto de entrada do seu aplicativo
 gapi.load('client:auth2', async () => {
     try {
-        await loadDataFromGoogleSheets();
+        const data = await loadDataFromGoogleSheets();
+        movimentacoesData = data.movimentacoes;
+        cotasData = data.cotas;
         populateMonthFilter();
         applyFilters();
     } catch (error) {
