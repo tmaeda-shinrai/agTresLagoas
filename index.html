@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Agência Regional de Três Lagoas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">Painel Agência Regional de Três Lagoas</h1>
+            <p class="subtitle">Diárias utilizadas para auxiliar no atendimento em agências de interior</p>
+        </header>
+
+        <!-- Cards Section -->
+        <section class="cards-section">
+            <div class="card" id="cota-card">
+                <div class="card-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Cota Mensal</h3>
+                    <p class="card-value" id="cota-value">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="card" id="utilizado-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Utilizado</h3>
+                    <p class="card-value" id="utilizado-value">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="card" id="recebido-card">
+                <div class="card-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Pedidos Recebidos</h3>
+                    <p class="card-value" id="recebido-value">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="card" id="disponivel-card">
+                <div class="card-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Disponível</h3>
+                    <p class="card-value" id="disponivel-value">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="card" id="informativo-card">    
+                <div>            
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Informações</h2>
+                    <p>O valor "Pedidos Recebidos" são as solicações que o setor de Diárias recebeu mais ainda não foram enviados para pagamento.</p>
+                    <br>
+                    <p> ou qualquer outro tipo de informação</p>
+                    
+                </div>
+            </div>
+
+
+
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="month-filter">Mês/Ano:</label>
+                    <select id="month-filter" class="filter-select">
+                        <option value="">Todos os períodos</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="name-filter">Nome do Servidor:</label>
+                    <input type="text" id="name-filter" class="filter-input" placeholder="Digite parte do nome...">
+                </div>
+                
+                <button id="clear-filters" class="clear-btn">
+                    <i class="fas fa-times"></i>
+                    Limpar Filtros
+                </button>
+            </div>
+        </section>
+
+        <!-- Table Section -->
+        <section class="table-section">
+            <div class="table-container">
+                <table class="data-table" id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Servidor</th>
+                            <th>Data Inicial</th>
+                            <th>Data Final</th>
+                            <th>Destino</th>
+                            <th>Valor</th>
+                            <th>Envio para Pagamento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Dados serão inseridos dinamicamente via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-info">
+                <span id="table-count">0 registros encontrados</span>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Carregando dados...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
