@@ -3,136 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Agência Regional de Três Lagoas</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Painel Agência Regional</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div>class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="title">Painel Agência Regional de Três Lagoas</h1>
-            <p class="subtitle">Diárias utilizadas para auxiliar no atendimento em agências de interior</p>
-        </header>
-
-        <!-- Cards Section -->
-        <section class="cards-section">
-            <div class="card" id="cota-card">
-                <div class="card-icon">
-                    <i class="fas fa-wallet"></i>
+    <div class="container">
+        <!-- Auth Section -->
+        <section id="auth-section" class="auth-section">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <i class="fab fa-google"></i>
+                    <h2>Acesso ao Sistema</h2>
+                    <p>Entre com sua conta Google para acessar o painel</p>
                 </div>
-                <div class="card-content">
-                    <h3 class="card-title">Cota Mensal</h3>
-                    <p class="card-value" id="cota-value">R$ 0,00</p>
-                </div>
-            </div>
-
-            <div class="card" id="utilizado-card">
-                <div class="card-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Utilizado</h3>
-                    <p class="card-value" id="utilizado-value">R$ 0,00</p>
-                </div>
-            </div>
-
-            <div class="card" id="recebido-card">
-                <div class="card-icon">
-                    <i class="fas fa-inbox"></i>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Pedidos Recebidos</h3>
-                    <p class="card-value" id="recebido-value">R$ 0,00</p>
-                </div>
-            </div>
-
-            <div class="card" id="disponivel-card">
-                <div class="card-icon">
-                    <i class="fas fa-piggy-bank"></i>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Disponível</h3>
-                    <p class="card-value" id="disponivel-value">R$ 0,00</p>
-                </div>
-            </div>
-
-            <div class="card" id="informativo-card">    
-                <div>            
-                </div>
-                <div class="card-content">
-                    <h2 class="card-title">Informações</h2>
-                    <p>O valor "Pedidos Recebidos" são as solicações que o setor de Diárias recebeu mais ainda não foram enviados para pagamento.</p>
-                    <br>
-                    <p> ou qualquer outro tipo de informação</p>
-                    
-                </div>
-            </div>
-
-
-
-        </section>
-
-        <!-- Filters Section -->
-        <section class="filters-section">
-            <div class="filters-container">
-                <div class="filter-group">
-                    <label for="month-filter">Mês/Ano:</label>
-                    <select id="month-filter" class="filter-select">
-                        <option value="">Todos os períodos</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="name-filter">Nome do Servidor:</label>
-                    <input type="text" id="name-filter" class="filter-input" placeholder="Digite parte do nome...">
-                </div>
-                
-                <button id="clear-filters" class="clear-btn">
-                    <i class="fas fa-times"></i>
-                    Limpar Filtros
+                <button id="authorize-btn" class="auth-btn">
+                    <i class="fab fa-google"></i>
+                    Entrar com Google
                 </button>
+                <button id="signout-btn" class="auth-btn signout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+                <div id="auth-status" class="auth-status"></div>
             </div>
         </section>
 
-        <!-- Table Section -->
-        <section class="table-section">
-            <div class="table-container">
-                <table class="data-table" id="data-table">
-                    <thead>
-                        <tr>
-                            <th>Servidor</th>
-                            <th>Data Inicial</th>
-                            <th>Data Final</th>
-                            <th>Destino</th>
-                            <th>Valor</th>
-                            <th>Envio para Pagamento</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- Dados serão inseridos dinamicamente via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="table-info">
-                <span id="table-count">0 registros encontrados</span>
-            </div>
-        </section>
+        <div id="main-app" style="display: none;">
+            <header class="header">
+                <div class="header-content">
+                    <div class="header-text">
+                        <h1 class="title">Painel Agência Regional</h1>
+                        <p class="subtitle">Diárias utilizadas para auxiliar no atendimento em agências de interior</p>
+                    </div>
+                    <div class="user-info">
+                        <img id="user-photo" class="user-photo" src="" alt="User">
+                        <div class="user-details">
+                            <span id="user-name" class="user-name"></span>
+                            <span id="user-email" class="user-email"></span>
+                        </div>
+                        <button id="signout-btn-header" class="signout-btn-header">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
 
-        <!-- Loading Indicator -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Carregando dados...</p>
+        <main class="main-content">
+            <!-- Cards Section -->
+            <section class="cards-section">
+                <div class="card" id="card-cota">
+                    <div class="card-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Cota Mensal</h3>
+                        <p class="card-value" id="cota-value">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="card" id="card-utilizado">
+                    <div class="card-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Utilizado</h3>
+                        <p class="card-value" id="utilizado-value">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="card" id="card-recebido">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Pedidos Recebido</h3>
+                        <p class="card-value" id="recebido-value">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="card" id="card-disponivel">
+                    <div class="card-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Disponível</h3>
+                        <p class="card-value" id="disponivel-value">R$ 0,00</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="filter-date">Mês/Ano (Envio para pagamento):</label>
+                        <select id="filter-date" class="filter-select">
+                            <option value="">Todos os períodos</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filter-name">Nome do Servidor:</label>
+                        <input type="text" id="filter-name" class="filter-input" placeholder="Digite o nome...">
+                    </div>
+
+                    <button id="clear-filters" class="clear-btn">
+                        <i class="fas fa-times"></i>
+                        Limpar Filtros
+                    </button>
+                    
+                    <button id="refresh-data" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                </div>
+            </section>
+
+            <!-- Table Section -->
+            <section class="table-section">
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        <table class="data-table" id="movements-table">
+                            <thead>
+                                <tr>
+                                    <th>Servidor</th>
+                                    <th>Data Inicial</th>
+                                    <th>Data Final</th>
+                                    <th>Destino</th>
+                                    <th>Valor</th>
+                                    <th>Envio para pagamento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Dados serão inseridos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-info">
+                        <p id="table-count">Total de registros: 0</p>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
-     <script src="https://apis.google.com/js/api.js"></script>
-    
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
-    <script src="script.js"></script>
 
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Carregando dados...</p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
